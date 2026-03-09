@@ -1,28 +1,21 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import PublicRoute from "./routes/public-routes";
-import { Login } from "./modules/auth/presentation/views";
-import PrivateRoute from "./routes/private-routes";
-import { Home } from "./modules/home/presentation/views";
 import "./styles/global.css";
+import { MainRoutes } from "./routes/main-routes";
+import { useEffect } from "react";
+import { Workbox } from "workbox-window";
 
 const App = () => {
-  return (
-    <Router>
-      <Routes>
-        {/* Ruta pública general */}
-        <Route path="/" element={<Home />} />
-        {/* Rutas públicas */}
-        <Route path="/access-to-dashboard" element={<PublicRoute />}>
-          <Route path="login" element={<Login />} />
-        </Route>
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      const wb = new Workbox("/service-worker.js"); // Asegúrate de que esta ruta es correcta
+      wb.register()
+        .then((registration) => console.log("Service Worker registrado"))
+        .catch((error) =>
+          console.log("Error al registrar el Service Worker:", error)
+        );
+    }
+  }, []);
 
-        {/* Rutas privadas */}
-        <Route path="/dashboard" element={<PrivateRoute />}>
-          <Route path="dashboard" element={<></>} />
-        </Route>
-      </Routes>
-    </Router>
-  );
+  return <MainRoutes />;
 };
 
 export default App;
